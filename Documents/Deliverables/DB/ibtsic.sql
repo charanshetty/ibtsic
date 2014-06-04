@@ -53,15 +53,15 @@ DROP TABLE IF EXISTS `Bus`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Bus` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `x` double DEFAULT '0',
-  `y` double DEFAULT '0',
-  `path1Id` int(11) DEFAULT NULL,
-  `path2Id` int(11) DEFAULT NULL,
+  `latitude` double DEFAULT '0',
+  `longitude` double DEFAULT '0',
+  `toPathId` int(11) DEFAULT NULL,
+  `froPathId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_Bus_1` (`path1Id`),
-  KEY `fk_Bus_2` (`path2Id`),
-  CONSTRAINT `fk_Bus_1` FOREIGN KEY (`path1Id`) REFERENCES `Path` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Bus_2` FOREIGN KEY (`path2Id`) REFERENCES `Path` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  KEY `fk_Bus_1` (`toPathId`),
+  KEY `fk_Bus_2` (`froPathId`),
+  CONSTRAINT `fk_Bus_1` FOREIGN KEY (`toPathId`) REFERENCES `Path` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Bus_2` FOREIGN KEY (`froPathId`) REFERENCES `Path` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -84,8 +84,8 @@ DROP TABLE IF EXISTS `Node`;
 CREATE TABLE `Node` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
-  `x` double DEFAULT '0',
-  `y` double DEFAULT '0',
+  `latitude` double DEFAULT '0',
+  `longitude` double DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Nodecol_UNIQUE` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -190,4 +190,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-06-03 18:58:38
+-- Dump completed on 2014-06-04 21:41:51

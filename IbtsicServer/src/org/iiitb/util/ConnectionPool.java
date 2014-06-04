@@ -25,18 +25,18 @@ public class ConnectionPool
 
 	public static Connection getConnection()
 	{
-		Connection conn = null;
+		Connection cn = null;
 		try
 		{
 			if (datasource != null)
 			{
-				conn = datasource.getConnection();
+				cn = datasource.getConnection();
 			}
 			else
 			{
 				Context context = new InitialContext();
 				datasource = (DataSource) context.lookup("java:comp/env/jdbc/db");
-				conn = datasource.getConnection();
+				cn = datasource.getConnection();
 			}
 		}
 
@@ -48,14 +48,14 @@ public class ConnectionPool
 		{
 			e.printStackTrace();
 		}
-		return conn;
+		return cn;
 	}
 
-	public static void freeConnection(Connection conn)
+	public static void freeConnection(Connection cn)
 	{
 		try
 		{
-			conn.close();
+			cn.close();
 		}
 		catch (SQLException e)
 		{
