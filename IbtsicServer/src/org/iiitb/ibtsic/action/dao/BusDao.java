@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class BusDao
 {
-	private static final String UPDATE_BUS_LOCATION_QUERY=
+	private static final String SET_BUS_LOCATION_QUERY=
 			"update Bus set latitude=?, longitude=? where id=?;"; 
 	
 	private Connection cn;
@@ -16,10 +16,10 @@ public class BusDao
 		this.cn=cn;
 	}
 	
-	public void updateBusLocation(int busId, double latitude, double longitude) throws SQLException
+	public void setBusLocation(int busId, double latitude, double longitude) throws SQLException
 	{
 		int ind=0;
-		PreparedStatement ps=cn.prepareStatement(UPDATE_BUS_LOCATION_QUERY);
+		PreparedStatement ps=cn.prepareStatement(SET_BUS_LOCATION_QUERY);
 		ps.setDouble(++ind, latitude);
 		ps.setDouble(++ind, longitude);
 		ps.setInt(++ind, busId);

@@ -9,12 +9,22 @@
     <welcome-file>default.htm</welcome-file>
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
+  
   <servlet>
-    <servlet-name>UpdateBusLocation</servlet-name>
-    <servlet-class>org.iiitb.ibtsic.action.UpdateBusLocation</servlet-class>
+    <servlet-name>SetBusLocationAction</servlet-name>
+    <servlet-class>org.iiitb.ibtsic.action.SetBusLocationAction</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>UpdateBusLocation</servlet-name>
-    <url-pattern>/updateBusLocation</url-pattern>
+    <servlet-name>SetBusLocationAction</servlet-name>
+    <url-pattern>/setBusLocationAction</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>GetStaticPathInfoAction</servlet-name>
+    <servlet-class>org.iiitb.ibtsic.action.GetStaticPathInfoAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetStaticPathInfoAction</servlet-name>
+    <url-pattern>/getStaticPathInfoAction</url-pattern>
   </servlet-mapping>
 </web-app>
