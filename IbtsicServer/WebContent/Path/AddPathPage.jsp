@@ -14,7 +14,7 @@
 		<table>
 			<tr>
 				<td>Bus Route Name: </td>
-				<td><input name="name" type="text" /></td>
+				<td><input id="name" name="name" type="text" /></td>
 			</tr>
 		</table><br />
 		Choose Bus Stops<br />
@@ -77,10 +77,12 @@
 <script type="text/javascript">
 	function onClick_add()
 	{
-		if(l2.options.length<2)
-			alert('Choose at least 2 bus stops.');
+		if(document.getElementById('name').value=='')
+			alert('Please enter the route name.');
+		else if(l2.options.length<2)
+			alert('Please choose at least 2 bus stops.');
 		else if(l4.options.length<1)
-			alert('Add at least 1 run.');
+			alert('Please add at least 1 run.');
 		else
 		{
 			onClick_selectAll(l2);

@@ -8,25 +8,36 @@
 </head>
 <body>
 	<h2>Add New Bus Stop</h2>
-	<form action="addNodeAction" method="post">
+	<form id='frmAddNode' action="addNodeAction" method="post">
 		<table>
 			<tr>
 				<td>Bus Stop Name: </td>
-				<td><input name="name" type="text" /></td>
+				<td><input id="name" name="name" type="text" /></td>
 			</tr>
 			<tr>
 				<td>Latitude: </td>
-				<td><input name="latitude" type="text" /></td>
+				<td><input id="latitude" name="latitude" type="text" /></td>
 			</tr>
 			<tr>
 				<td>Longitude: </td>
-				<td><input name="longitude" type="text" /></td>
+				<td><input id="longitude" name="longitude" type="text" /></td>
 			</tr>
 		</table>
-		<input type="submit" value="Add" /><br />
+		<input type="button" value="Add" onclick="onClick_add()" /><br />
 	</form>
 	<%if(request.getAttribute("message")!=null) {%>
 		<%=request.getAttribute("message").toString() %>
 	<%} %>
 </body>
+<script type="text/javascript">
+	function onClick_add()
+	{
+		if(document.getElementById('name').value=='')
+			alert('Bus stop name is empty.');
+		else if(document.getElementById('latitude').value=='')
+			alert('Latitude is empty.');
+		else if(document.getElementById('longitude').value=='')
+			alert('Longitude is empty.');
+	}
+</script>
 </html>
