@@ -27,4 +27,22 @@
     <servlet-name>GetStaticPathInfoAction</servlet-name>
     <url-pattern>/getStaticPathInfoAction</url-pattern>
   </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>AddNodeAction</servlet-name>
+    <servlet-class>org.iiitb.ibtsic.action.admin.AddNodeAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AddNodeAction</servlet-name>
+    <url-pattern>/addNodeAction</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>AddPathAction</servlet-name>
+    <servlet-class>org.iiitb.ibtsic.action.admin.AddPathAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AddPathAction</servlet-name>
+    <url-pattern>/addPathAction</url-pattern>
+  </servlet-mapping>
 </web-app>

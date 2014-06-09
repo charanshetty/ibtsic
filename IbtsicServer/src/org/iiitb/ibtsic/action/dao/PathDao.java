@@ -37,7 +37,8 @@ public class PathDao
 		ps.setInt(++ind, n);
 		ResultSet rs=ps.executeQuery();
 		if(rs.next())
-			r=new Node(rs.getString("name"), 
+			r=new Node(rs.getInt("id"),
+					rs.getString("name"), 
 					rs.getDouble("latitude"), 
 					rs.getDouble("longitude"));
 
@@ -76,7 +77,8 @@ public class PathDao
 		ps.setString(1, pathName);
 		ResultSet rs=ps.executeQuery();
 		while(rs.next())
-			r.add(new Run(rs.getInt("number"), 
+			r.add(new Run(rs.getInt("id"),
+					rs.getInt("number"), 
 					rs.getString("startTime"), 
 					rs.getString("endTime")));
 		rs.close();
