@@ -11,8 +11,11 @@ import org.iiitb.ibtsic.action.model.Node;
 
 public class NodeDao
 {
-	private static final String CREATE_NODE_QUERY=
-			"insert into Node(name, latitude, longitude) values(?, ?, ?);"; 
+	private static final String ADD_NODE_QUERY=
+			"insert into Node(name, latitude, longitude) values(?, ?, ?);";
+	
+	private static final String GET_MAX_NODE_ID_QUERY=
+			"select max(id) from Node;";
 	
 	private static final String GET_ALL_NODES_QUERY=
 			"select * from Node order by id;";
@@ -24,15 +27,22 @@ public class NodeDao
 		this.cn=cn;
 	}
 	
-	public void addNode(Node node) throws SQLException
+	public int addNode(Node node) throws SQLException
 	{
-		int ind=0;
-		PreparedStatement ps=cn.prepareStatement(CREATE_NODE_QUERY);
+		int r=-1, ind=0;
+		PreparedStatement ps=cn.prepareStatement(ADD_NODE_QUERY);
 		ps.setString(++ind, node.name);
 		ps.setDouble(++ind, node.latitude);
 		ps.setDouble(++ind, node.longitude);
 		ps.executeUpdate();
 		ps.close();
+		ps=cn.prepareStatement(GET_MAX_NODE_ID_QUERY);
+		ResultSet rs=ps.executeQuery();
+		if(rs.next())
+			r=rs.getInt(1);
+		rs.close();
+		ps.close();
+		return r;
 	}
 	
 	public List<Node> getAllNodes() throws SQLException

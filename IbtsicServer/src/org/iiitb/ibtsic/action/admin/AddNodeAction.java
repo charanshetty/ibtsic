@@ -25,7 +25,7 @@ public class AddNodeAction extends HttpServlet
 	{
 		try
 		{
-			Node node=new Node(0,
+			Node node=new Node(-1,
 				request.getParameter("name"),
 				Double.parseDouble(request.getParameter("latitude")),
 				Double.parseDouble(request.getParameter("longitude")));

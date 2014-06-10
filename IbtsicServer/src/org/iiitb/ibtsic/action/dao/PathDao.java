@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iiitb.ibtsic.action.model.Node;
+import org.iiitb.ibtsic.action.model.Path;
 import org.iiitb.ibtsic.action.model.Run;
 
 public class PathDao
@@ -20,6 +21,24 @@ public class PathDao
 	
 	private static final String GET_ALL_RUNS_ON_PATH=
 			"select Run.* from Run, Path where Run.pathId=Path.id and Path.name=? order by Run.number;";
+	
+	private static final String ADD_PATH_QUERY=
+			"insert into Path(name) values(?);";
+	
+	private static final String GET_MAX_PATH_ID_QUERY=
+			"select max(id) from Path;";
+	
+	private static final String DELETE_ALL_NODES_IN_PATH_QUERY=
+			"delete from PathNode where pathId=?;";
+	
+	private static final String ADD_NODE_TO_PATH_QUERY=
+			"insert into PathNode(pathId, nodeId, seqNo) values(?, ?, ?);";
+	
+	private static final String DELETE_ALL_RUNS_ON_PATH_QUERY=
+			"delete from Run where pathId=?;";
+	
+	private static final String ADD_RUN_ON_PATH_QUERY=
+			"insert into Run(number, startTime, endTime, pathId) values(?, ?, ?, ?);";
 	
 	private Connection cn;
 	
@@ -80,9 +99,77 @@ public class PathDao
 			r.add(new Run(rs.getInt("id"),
 					rs.getInt("number"), 
 					rs.getString("startTime"), 
-					rs.getString("endTime")));
+					rs.getString("endTime"),
+					rs.getInt("pathId")));
 		rs.close();
 		ps.close();
 		return r;
+	}
+	
+	public int addPath(Path path) throws SQLException
+	{
+		int r=-1;
+		PreparedStatement ps=cn.prepareStatement(ADD_PATH_QUERY);
+		ps.setString(1, path.name);
+		ps.executeUpdate();
+		ps.close();
+		ps=cn.prepareStatement(GET_MAX_PATH_ID_QUERY);
+		ResultSet rs=ps.executeQuery();
+		if(rs.next())
+			r=rs.getInt(1);
+		rs.close();
+		ps.close();
+		return r;
+	}
+	
+	public void deleteAllNodesInPath(int pathId) throws SQLException
+	{
+		PreparedStatement ps=cn.prepareStatement(DELETE_ALL_NODES_IN_PATH_QUERY);
+		ps.setInt(1, pathId);
+		ps.executeUpdate();
+		ps.close();
+	}
+	
+	public int addNodesToPath(int pathId, List<Integer> nodeIdList) throws SQLException
+	{
+		deleteAllNodesInPath(pathId);
+		
+		PreparedStatement ps=cn.prepareStatement(ADD_NODE_TO_PATH_QUERY);
+		int seqNo=0;
+		for(int nodeId:nodeIdList)
+		{
+			ps.setInt(1, pathId);
+			ps.setInt(2, nodeId);
+			ps.setInt(3, ++seqNo);
+			ps.executeUpdate();
+		}
+		ps.close();
+		return seqNo;
+	}
+	
+	public void deleteAllRunsOnPath(int pathId) throws SQLException
+	{
+		PreparedStatement ps=cn.prepareStatement(DELETE_ALL_RUNS_ON_PATH_QUERY);
+		ps.setInt(1, pathId);
+		ps.executeUpdate();
+		ps.close();
+	}
+	
+	public int addRunsOnPath(int pathId, List<Run> runList) throws SQLException
+	{
+		deleteAllRunsOnPath(pathId);
+		
+		PreparedStatement ps=cn.prepareStatement(ADD_RUN_ON_PATH_QUERY);
+		int seqNo=0;
+		for(Run run:runList)
+		{
+			ps.setInt(1, ++seqNo);
+			ps.setString(2, run.startTime);
+			ps.setString(3, run.endTime);
+			ps.setInt(4, run.pathId);
+			ps.executeUpdate();
+		}
+		ps.close();
+		return seqNo;
 	}
 }

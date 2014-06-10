@@ -2,6 +2,7 @@ package org.iiitb.ibtsic.action.admin;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -10,6 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.iiitb.ibtsic.action.dao.NodeDao;
+import org.iiitb.ibtsic.action.dao.PathDao;
+import org.iiitb.ibtsic.action.model.Path;
+import org.iiitb.ibtsic.action.model.Run;
 import org.iiitb.util.ConnectionPool;
 
 public class AddPathAction extends HttpServlet
@@ -37,10 +41,32 @@ public class AddPathAction extends HttpServlet
 	{
 		try
 		{
+			int i=0;
+			List<Integer> nodeIdList=new ArrayList<Integer>();
 			for(String s:request.getParameterValues("nodesInPath"))
-				System.out.println(s);
-			for(String s:request.getParameterValues("runsOnPath"))
-				System.out.println(s);
+				nodeIdList.add(Integer.parseInt(s));
+			
+			Connection cn=ConnectionPool.getConnection();
+			PathDao pathDao=new PathDao(cn);
+			int pathId=pathDao.addPath(new Path(-1, request.getParameter("name")));
+			if(pathId!=-1)
+			{
+				pathDao.addNodesToPath(pathId, nodeIdList);
+				
+				List<Run> runList=new ArrayList<Run>();
+				for(String s:request.getParameterValues("runsOnPath"))
+				{
+					String startTime=s.split("-")[0].trim();
+					String endTime=s.split("-")[1].trim();
+					runList.add(new Run(-1,
+										-1,
+										startTime,
+										endTime,
+										pathId));
+				}
+				pathDao.addRunsOnPath(pathId, runList);
+			}
+			ConnectionPool.freeConnection(cn);
 			
 			request.setAttribute("message", "Success");
 			doGet(request, response);
