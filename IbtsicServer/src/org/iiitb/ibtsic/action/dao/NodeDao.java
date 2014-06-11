@@ -20,6 +20,12 @@ public class NodeDao
 	private static final String GET_ALL_NODES_QUERY=
 			"select * from Node order by id;";
 	
+	private static final String SET_NODE_DETAILS_QUERY=
+			"update Node set name=?, latitude=?, longitude=? where id=?;";
+	
+	private static final String DELETE_NODE_QUERY=
+			"delete from Node where id=?;";
+	
 	private Connection cn;
 	
 	public NodeDao(Connection cn)
@@ -58,5 +64,25 @@ public class NodeDao
 		rs.close();
 		ps.close();
 		return r;
+	}
+	
+	public void setNodeDetails(Node node) throws SQLException
+	{
+		PreparedStatement ps=cn.prepareStatement(SET_NODE_DETAILS_QUERY);
+		int ind=0;
+		ps.setString(++ind, node.name);
+		ps.setDouble(++ind, node.latitude);
+		ps.setDouble(++ind, node.longitude);
+		ps.setInt(++ind, node.id);
+		ps.executeUpdate();
+		ps.close();
+	}
+	
+	public void deleteNode(int nodeId) throws SQLException
+	{
+		PreparedStatement ps=cn.prepareStatement(DELETE_NODE_QUERY);
+		ps.setInt(1, nodeId);
+		ps.executeUpdate();
+		ps.close();
 	}
 }

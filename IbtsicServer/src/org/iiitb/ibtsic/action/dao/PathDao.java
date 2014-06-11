@@ -40,6 +40,15 @@ public class PathDao
 	private static final String ADD_RUN_ON_PATH_QUERY=
 			"insert into Run(number, startTime, endTime, pathId) values(?, ?, ?, ?);";
 	
+	private static final String GET_ALL_PATHNAMES_QUERY=
+			"select distinct(substring_index(name, '.', 1)) from Path;";
+	
+	private static final String GET_PATHID_FROM_PATHNAME_QUERY=
+			"select id from Path where name=?;";
+	
+	private static final String GET_ALL_ONWARD_PATHS_QUERY=
+			"select * from Path where name like '%.onward';";
+	
 	private Connection cn;
 	
 	public PathDao(Connection cn)
@@ -171,5 +180,42 @@ public class PathDao
 		}
 		ps.close();
 		return seqNo;
+	}
+	
+	public List<String> getAllPathNames() throws SQLException
+	{
+		PreparedStatement ps=cn.prepareStatement(GET_ALL_PATHNAMES_QUERY);
+		ResultSet rs=ps.executeQuery();
+		List<String> r=new ArrayList<String>();
+		while(rs.next())
+			r.add(rs.getString(1));
+		rs.close();
+		ps.close();
+		return r;
+	}
+	
+	public int getPathIdFromPathName(String pathName) throws SQLException
+	{
+		int r=-1;
+		PreparedStatement ps=cn.prepareStatement(GET_PATHID_FROM_PATHNAME_QUERY);
+		ps.setString(1, pathName);
+		ResultSet rs=ps.executeQuery();
+		if(rs.next())
+			r=rs.getInt(1);
+		rs.close();
+		ps.close();
+		return r;
+	}
+	
+	public List<Path> getAllOnwardPaths() throws SQLException
+	{
+		PreparedStatement ps=cn.prepareStatement(GET_ALL_ONWARD_PATHS_QUERY);
+		ResultSet rs=ps.executeQuery();
+		List<Path> r=new ArrayList<Path>();
+		while(rs.next())
+			r.add(new Path(rs.getInt("id"), rs.getString("name")));
+		rs.close();
+		ps.close();
+		return r;
 	}
 }

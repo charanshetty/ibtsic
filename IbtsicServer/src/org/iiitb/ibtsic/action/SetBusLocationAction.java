@@ -22,13 +22,13 @@ public class SetBusLocationAction extends HttpServlet
 		{
 			response.setContentType("text");
 			
-			int busId=Integer.parseInt(request.getParameter("busId"));
+			String regNo=request.getParameter("regNo");
 			Double latitude=Double.parseDouble(request.getParameter("latitude"));
 			Double longitude=Double.parseDouble(request.getParameter("longitude"));
 			
 			Connection cn=ConnectionPool.getConnection();
 			BusDao busDao=new BusDao(cn);
-			busDao.setBusLocation(busId, latitude, longitude);
+			busDao.setBusLocation(regNo, latitude, longitude);
 			ConnectionPool.freeConnection(cn);
 		}
 		catch(Exception e)

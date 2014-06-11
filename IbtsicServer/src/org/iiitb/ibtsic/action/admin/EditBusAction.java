@@ -14,7 +14,7 @@ import org.iiitb.ibtsic.action.dao.PathDao;
 import org.iiitb.ibtsic.action.model.Bus;
 import org.iiitb.util.ConnectionPool;
 
-public class AddBusAction extends HttpServlet
+public class EditBusAction extends HttpServlet
 {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException		
@@ -22,16 +22,18 @@ public class AddBusAction extends HttpServlet
 		try
 		{
 			Connection cn=ConnectionPool.getConnection();
+			BusDao busDao=new BusDao(cn);
+			request.setAttribute("busList", busDao.getAllBuses());
 			PathDao pathDao=new PathDao(cn);
-			request.setAttribute("pathNameList", pathDao.getAllPathNames());
+			request.setAttribute("pathList", pathDao.getAllOnwardPaths());
 			ConnectionPool.freeConnection(cn);
 			
-			request.getRequestDispatcher("Bus/AddBusPage.jsp").forward(request, response);
+			request.getRequestDispatcher("Bus/EditBusPage.jsp").forward(request, response);
 		}
 		catch(Exception e)
 		{
-			request.setAttribute("pathNameList", new ArrayList<String>());
-			request.getRequestDispatcher("Bus/AddBusPage.jsp").forward(request, response);
+			request.setAttribute("busList", new ArrayList<Bus>());
+			request.getRequestDispatcher("Bus/EditBusPage.jsp").forward(request, response);
 		}
 	}
 	
@@ -42,7 +44,8 @@ public class AddBusAction extends HttpServlet
 		{
 			Connection cn=ConnectionPool.getConnection();
 			PathDao pathDao=new PathDao(cn);
-			Bus bus=new Bus(-1, 
+			
+			Bus bus=new Bus(Integer.parseInt(request.getParameter("busId").split("[|]")[0]), 
 							request.getParameter("regNo"), 
 							-1, 
 							-1, 
@@ -50,7 +53,7 @@ public class AddBusAction extends HttpServlet
 							pathDao.getPathIdFromPathName(request.getParameter("pathName")+".return"));
 			
 			BusDao busDao=new BusDao(cn);
-			busDao.addBus(bus);
+			busDao.setBusDetails(bus);
 			ConnectionPool.freeConnection(cn);
 			
 			request.setAttribute("message", "Success");

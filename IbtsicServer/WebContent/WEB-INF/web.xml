@@ -38,6 +38,24 @@
   </servlet-mapping>
   
   <servlet>
+    <servlet-name>EditNodeAction</servlet-name>
+    <servlet-class>org.iiitb.ibtsic.action.admin.EditNodeAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>EditNodeAction</servlet-name>
+    <url-pattern>/editNodeAction</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>DeleteNodeAction</servlet-name>
+    <servlet-class>org.iiitb.ibtsic.action.admin.DeleteNodeAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DeleteNodeAction</servlet-name>
+    <url-pattern>/deleteNodeAction</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
     <servlet-name>AddPathAction</servlet-name>
     <servlet-class>org.iiitb.ibtsic.action.admin.AddPathAction</servlet-class>
   </servlet>
@@ -45,4 +63,32 @@
     <servlet-name>AddPathAction</servlet-name>
     <url-pattern>/addPathAction</url-pattern>
   </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>AddBusAction</servlet-name>
+    <servlet-class>org.iiitb.ibtsic.action.admin.AddBusAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AddBusAction</servlet-name>
+    <url-pattern>/addBusAction</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>EditBusAction</servlet-name>
+    <servlet-class>org.iiitb.ibtsic.action.admin.EditBusAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>EditBusAction</servlet-name>
+    <url-pattern>/editBusAction</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>DeleteBusAction</servlet-name>
+    <servlet-class>org.iiitb.ibtsic.action.admin.DeleteBusAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DeleteBusAction</servlet-name>
+    <url-pattern>/deleteBusAction</url-pattern>
+  </servlet-mapping>
 </web-app>
+

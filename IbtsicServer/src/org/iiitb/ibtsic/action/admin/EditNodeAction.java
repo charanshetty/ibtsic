@@ -11,13 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.iiitb.ibtsic.action.dao.NodeDao;
-import org.iiitb.ibtsic.action.dao.PathDao;
 import org.iiitb.ibtsic.action.model.Node;
-import org.iiitb.ibtsic.action.model.Path;
-import org.iiitb.ibtsic.action.model.Run;
 import org.iiitb.util.ConnectionPool;
 
-public class AddPathAction extends HttpServlet
+public class EditNodeAction extends HttpServlet
 {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException		
@@ -29,12 +26,12 @@ public class AddPathAction extends HttpServlet
 			request.setAttribute("nodeList", nodeDao.getAllNodes());
 			ConnectionPool.freeConnection(cn);
 			
-			request.getRequestDispatcher("Path/AddPathPage.jsp").forward(request, response);
+			request.getRequestDispatcher("Node/EditNodePage.jsp").forward(request, response);
 		}
 		catch(Exception e)
 		{
 			request.setAttribute("nodeList", new ArrayList<Node>());
-			request.getRequestDispatcher("Path/AddPathPage.jsp").forward(request, response);
+			request.getRequestDispatcher("Node/EditNodePage.jsp").forward(request, response);
 		}
 	}
 	
@@ -43,31 +40,14 @@ public class AddPathAction extends HttpServlet
 	{
 		try
 		{
-			int i=0;
-			List<Integer> nodeIdList=new ArrayList<Integer>();
-			for(String s:request.getParameterValues("nodesInPath"))
-				nodeIdList.add(Integer.parseInt(s));
+			Node node=new Node(Integer.parseInt(request.getParameter("nodeId").split("[|]")[0]),
+				request.getParameter("name"),
+				Double.parseDouble(request.getParameter("latitude")),
+				Double.parseDouble(request.getParameter("longitude")));
 			
 			Connection cn=ConnectionPool.getConnection();
-			PathDao pathDao=new PathDao(cn);
-			int pathId=pathDao.addPath(new Path(-1, request.getParameter("name")));
-			if(pathId!=-1)
-			{
-				pathDao.addNodesToPath(pathId, nodeIdList);
-				
-				List<Run> runList=new ArrayList<Run>();
-				for(String s:request.getParameterValues("runsOnPath"))
-				{
-					String startTime=s.split("-")[0].trim();
-					String endTime=s.split("-")[1].trim();
-					runList.add(new Run(-1,
-										-1,
-										startTime,
-										endTime,
-										pathId));
-				}
-				pathDao.addRunsOnPath(pathId, runList);
-			}
+			NodeDao nodeDao=new NodeDao(cn);
+			nodeDao.setNodeDetails(node);
 			ConnectionPool.freeConnection(cn);
 			
 			request.setAttribute("message", "Success");
