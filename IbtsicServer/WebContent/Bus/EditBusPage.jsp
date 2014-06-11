@@ -21,6 +21,7 @@
 		<a href="addPathAction" style="text-decoration: none; color: gray;">Add New Bus Route</a><br />
 		<a href="addBusAction" style="text-decoration: none; color: gray;">Add New Bus</a><br />
 		<a href="editBusAction" style="text-decoration: none; color: gray;">Edit Bus Details &gt;</a><br />
+		<a href="deleteBusAction" style="text-decoration: none; color: gray;">Delete Bus</a><br />
 	</div>
 	<div style="margin-left: 350px">
 		<h2>Edit Bus Details</h2>
@@ -46,6 +47,7 @@
 					<td>New Route: </td>
 					<td>
 						<select id="pathId" name="pathId">
+							<option></option>
 							<%for(Path path:(List<Path>)request.getAttribute("pathList")) {%>
 								<option value='<%=path.id %>'><%=path.name.split("[.]")[0] %></option>
 							<%} %>

@@ -18,6 +18,7 @@
 		<a href="addPathAction" style="text-decoration: none; color: gray;">Add New Bus Route</a><br />
 		<a href="addBusAction" style="text-decoration: none; color: gray;">Add New Bus &gt;</a><br />
 		<a href="editBusAction" style="text-decoration: none; color: gray;">Edit Bus Details</a><br />
+		<a href="deleteBusAction" style="text-decoration: none; color: gray;">Delete Bus</a><br />
 	</div>
 	<div style="margin-left: 350px">
 		<h2>Add New Bus</h2>
