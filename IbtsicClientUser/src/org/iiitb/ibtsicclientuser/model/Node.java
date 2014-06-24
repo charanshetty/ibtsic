@@ -1,4 +1,4 @@
-package org.iiitb.ibtsic.action.model;
+package org.iiitb.ibtsicclientuser.model;
 
 public class Node
 {

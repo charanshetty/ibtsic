@@ -18,13 +18,16 @@ public class NodeDao
 			"select max(id) from Node;";
 	
 	private static final String GET_ALL_NODES_QUERY=
-			"select * from Node order by id;";
+			"select * from Node order by name;";
 	
 	private static final String SET_NODE_DETAILS_QUERY=
 			"update Node set name=?, latitude=?, longitude=? where id=?;";
 	
 	private static final String DELETE_NODE_QUERY=
 			"delete from Node where id=?;";
+	
+	private static final String GET_NODENAMES_WITH_PREFIX_QUERY=
+			"select name from Node where name like ? order by name;";
 	
 	private Connection cn;
 	
@@ -84,5 +87,18 @@ public class NodeDao
 		ps.setInt(1, nodeId);
 		ps.executeUpdate();
 		ps.close();
+	}
+	
+	public List<String> getNodeNamesWithPrefix(String nodeNamePrefix) throws SQLException
+	{
+		PreparedStatement ps=cn.prepareStatement(GET_NODENAMES_WITH_PREFIX_QUERY);
+		ps.setString(1, nodeNamePrefix+"%");
+		ResultSet rs=ps.executeQuery();
+		List<String> r=new ArrayList<String>();
+		while(rs.next())
+			r.add(rs.getString(1));
+		rs.close();
+		ps.close();
+		return r;
 	}
 }

@@ -29,6 +29,24 @@
   </servlet-mapping>
   
   <servlet>
+    <servlet-name>GetPathNamesWithPrefixAction</servlet-name>
+    <servlet-class>org.iiitb.ibtsic.action.GetPathNamesWithPrefixAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetPathNamesWithPrefixAction</servlet-name>
+    <url-pattern>/getPathNamesWithPrefixAction</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>GetNodeNamesWithPrefixAction</servlet-name>
+    <servlet-class>org.iiitb.ibtsic.action.GetNodeNamesWithPrefixAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetNodeNamesWithPrefixAction</servlet-name>
+    <url-pattern>/getNodeNamesWithPrefixAction</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
     <servlet-name>AddNodeAction</servlet-name>
     <servlet-class>org.iiitb.ibtsic.action.admin.AddNodeAction</servlet-class>
   </servlet>

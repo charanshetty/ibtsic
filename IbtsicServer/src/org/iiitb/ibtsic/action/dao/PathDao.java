@@ -41,13 +41,16 @@ public class PathDao
 			"insert into Run(number, startTime, endTime, pathId) values(?, ?, ?, ?);";
 	
 	private static final String GET_ALL_PATHNAMES_QUERY=
-			"select distinct(substring_index(name, '.', 1)) from Path;";
+			"select distinct(substring_index(name, '.', 1)) name from Path order by name;";
 	
 	private static final String GET_PATHID_FROM_PATHNAME_QUERY=
 			"select id from Path where name=?;";
 	
 	private static final String GET_ALL_ONWARD_PATHS_QUERY=
 			"select * from Path where name like '%.onward';";
+	
+	private static final String GET_PATHNAMES_WITH_PREFIX_QUERY=
+			"select distinct(substring_index(name, '.', 1)) name from Path where name like ? order by name;";
 	
 	private Connection cn;
 	
@@ -214,6 +217,19 @@ public class PathDao
 		List<Path> r=new ArrayList<Path>();
 		while(rs.next())
 			r.add(new Path(rs.getInt("id"), rs.getString("name")));
+		rs.close();
+		ps.close();
+		return r;
+	}
+	
+	public List<String> getPathNamesWithPrefix(String pathNamePrefix) throws SQLException
+	{
+		PreparedStatement ps=cn.prepareStatement(GET_PATHNAMES_WITH_PREFIX_QUERY);
+		ps.setString(1, pathNamePrefix+"%");
+		ResultSet rs=ps.executeQuery();
+		List<String> r=new ArrayList<String>();
+		while(rs.next())
+			r.add(rs.getString(1));
 		rs.close();
 		ps.close();
 		return r;
