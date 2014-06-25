@@ -41,10 +41,16 @@ public class GetPathsConnectingTwoNodesAction extends HttpServlet
 			if(node1Id!=-1 && node2Id!=-1)
 			{
 				List<Path> pathList=pathDao.getPathsConnectingTwoNodes(node1Id, node2Id);
-				List<String> arrivalTimesList=new ArrayList<String>();
+				List<String> departureTimesList=new ArrayList<String>();
+				List<String> departureDurationsList=new ArrayList<String>();
 				for(Path p:pathList)
-					arrivalTimesList.add(pathDao.getNextArrivalTime(p.id, node1Id));
+				{
+					departureTimesList.add(pathDao.getNextDepartureTime(p.id, node1Id));
+					departureDurationsList.add(pathDao.getNextDepartureDuration(p.id, node1Id, node2Id));
+				}
 				pw.println(gson.toJson(pathList));
+				pw.println(gson.toJson(departureTimesList));
+				pw.println(gson.toJson(departureDurationsList));
 			}
 			ConnectionPool.freeConnection(cn);
 		}

@@ -58,8 +58,11 @@ public class PathDao
 	private static final String GET_PATHS_CONNECTING_TWO_NODES_QUERY=
 			"select c.* from (select * from PathNode where nodeId=?) a, (select * from PathNode where nodeId=?) b, Path c where a.pathId=b.pathId and a.seqNo<b.seqNo and c.id=a.pathId;";
 	
-	private static final String GET_NEXT_ARRIVAL_TIME_QUERY=
-			"select min(a.t) from (select addtime(Run.startTime, sec_to_time(time_to_sec(PathNode.arrivalTime)*time_to_sec(subtime(Run.endTime, Run.startTime))/time_to_sec(pn.arrivalTime))) t from PathNode, Run, PathNode pn where PathNode.pathId=? and PathNode.nodeId=? and Run.pathId=PathNode.pathId and pn.seqNo=(select max(seqNo) from PathNode where pathId=pn.PathId) and pn.pathId=PathNode.pathId) a where a.t>curtime();";
+	private static final String GET_NEXT_DEPARTURE_TIME_QUERY=
+			"select min(a.t) from (select addtime(Run.startTime, sec_to_time(time_to_sec(PathNode.departureTime)*time_to_sec(subtime(Run.endTime, Run.startTime))/time_to_sec(pn.arrivalTime))) t from PathNode, Run, PathNode pn where PathNode.pathId=? and PathNode.nodeId=? and Run.pathId=PathNode.pathId and pn.seqNo=(select max(seqNo) from PathNode where pathId=pn.PathId) and pn.pathId=PathNode.pathId) a where a.t>curtime();";
+	
+	private static final String GET_NEXT_DEPARTURE_DURATION_QUERY=
+			"select min(a.dur) from (select a.*, b.dt, c.dAt, subtime(c.dAt, b.dt) dur from (select Run.id, addtime(Run.startTime, sec_to_time(time_to_sec(PathNode.arrivalTime)*time_to_sec(subtime(Run.endTime, Run.startTime))/time_to_sec(pn.arrivalTime))) at from PathNode, Run, PathNode pn where PathNode.pathId=? and PathNode.nodeId=? and Run.pathId=PathNode.pathId and pn.seqNo=(select max(seqNo) from PathNode where pathId=pn.PathId) and pn.pathId=PathNode.pathId) a, (select Run.id, addtime(Run.startTime, sec_to_time(time_to_sec(PathNode.departureTime)*time_to_sec(subtime(Run.endTime, Run.startTime))/time_to_sec(pn.arrivalTime))) dt from PathNode, Run, PathNode pn where PathNode.pathId=? and PathNode.nodeId=? and Run.pathId=PathNode.pathId and pn.seqNo=(select max(seqNo) from PathNode where pathId=pn.PathId) and pn.pathId=PathNode.pathId) b, (select Run.id, addtime(Run.startTime, sec_to_time(time_to_sec(PathNode.arrivalTime)*time_to_sec(subtime(Run.endTime, Run.startTime))/time_to_sec(pn.arrivalTime))) dAt from PathNode, Run, PathNode pn where PathNode.pathId=? and PathNode.nodeId=? and Run.pathId=PathNode.pathId and pn.seqNo=(select max(seqNo) from PathNode where pathId=pn.PathId) and pn.pathId=PathNode.pathId) c where a.id=b.id and b.id=c.id) a where a.dt>curtime();";
 	
 	private Connection cn;
 	
@@ -277,13 +280,32 @@ public class PathDao
 		return r;
 	}
 	
-	public String getNextArrivalTime(int pathId, int nodeId) throws SQLException
+	public String getNextDepartureTime(int pathId, int nodeId) throws SQLException
 	{
 		String r=null;
-		PreparedStatement ps=cn.prepareStatement(GET_NEXT_ARRIVAL_TIME_QUERY);
+		PreparedStatement ps=cn.prepareStatement(GET_NEXT_DEPARTURE_TIME_QUERY);
 		int ind=0;
 		ps.setInt(++ind, pathId);
 		ps.setInt(++ind, nodeId);
+		ResultSet rs=ps.executeQuery();
+		if(rs.next())
+			r=rs.getString(1);
+		rs.close();
+		ps.close();
+		return r;
+	}
+	
+	public String getNextDepartureDuration(int pathId, int node1Id, int node2Id) throws SQLException
+	{
+		String r=null;
+		PreparedStatement ps=cn.prepareStatement(GET_NEXT_DEPARTURE_DURATION_QUERY);
+		int ind=0;
+		ps.setInt(++ind, pathId);
+		ps.setInt(++ind, node1Id);
+		ps.setInt(++ind, pathId);
+		ps.setInt(++ind, node1Id);
+		ps.setInt(++ind, pathId);
+		ps.setInt(++ind, node2Id);
 		ResultSet rs=ps.executeQuery();
 		if(rs.next())
 			r=rs.getString(1);
