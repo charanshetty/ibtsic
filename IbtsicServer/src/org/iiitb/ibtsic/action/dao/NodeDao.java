@@ -29,6 +29,9 @@ public class NodeDao
 	private static final String GET_NODENAMES_WITH_PREFIX_QUERY=
 			"select name from Node where name like ? order by name;";
 	
+	private static final String GET_NODEID_FROM_NODENAME_QUERY=
+			"select id from Node where name=?;";
+	
 	private Connection cn;
 	
 	public NodeDao(Connection cn)
@@ -97,6 +100,19 @@ public class NodeDao
 		List<String> r=new ArrayList<String>();
 		while(rs.next())
 			r.add(rs.getString(1));
+		rs.close();
+		ps.close();
+		return r;
+	}
+	
+	public int getNodeIdFromNodeName(String nodeName) throws SQLException
+	{
+		int r=-1;
+		PreparedStatement ps=cn.prepareStatement(GET_NODEID_FROM_NODENAME_QUERY);
+		ps.setString(1, nodeName);
+		ResultSet rs=ps.executeQuery();
+		if(rs.next())
+			r=rs.getInt(1);
 		rs.close();
 		ps.close();
 		return r;

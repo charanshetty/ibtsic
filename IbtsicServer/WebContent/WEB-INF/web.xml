@@ -47,6 +47,33 @@
   </servlet-mapping>
   
   <servlet>
+    <servlet-name>GetNodesInPathAction</servlet-name>
+    <servlet-class>org.iiitb.ibtsic.action.GetNodesInPathAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetNodesInPathAction</servlet-name>
+    <url-pattern>/getNodesInPathAction</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>GetRunsOnPathAction</servlet-name>
+    <servlet-class>org.iiitb.ibtsic.action.GetRunsOnPathAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetRunsOnPathAction</servlet-name>
+    <url-pattern>/getRunsOnPathAction</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>GetPathsConnectingTwoNodesAction</servlet-name>
+    <servlet-class>org.iiitb.ibtsic.action.GetPathsConnectingTwoNodesAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetPathsConnectingTwoNodesAction</servlet-name>
+    <url-pattern>/getPathsConnectingTwoNodesAction</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
     <servlet-name>AddNodeAction</servlet-name>
     <servlet-class>org.iiitb.ibtsic.action.admin.AddNodeAction</servlet-class>
   </servlet>

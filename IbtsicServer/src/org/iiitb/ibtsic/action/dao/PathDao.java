@@ -52,6 +52,15 @@ public class PathDao
 	private static final String GET_PATHNAMES_WITH_PREFIX_QUERY=
 			"select distinct(substring_index(name, '.', 1)) name from Path where name like ? order by name;";
 	
+	private static final String GET_NODES_IN_PATH_QUERY=
+			"select Node.* from Node, PathNode, Path where Node.id=PathNode.nodeId and PathNode.pathId=Path.id and Path.id=? order by PathNode.seqNo;";
+	
+	private static final String GET_PATHS_CONNECTING_TWO_NODES_QUERY=
+			"select c.* from (select * from PathNode where nodeId=?) a, (select * from PathNode where nodeId=?) b, Path c where a.pathId=b.pathId and a.seqNo<b.seqNo and c.id=a.pathId;";
+	
+	private static final String GET_NEXT_ARRIVAL_TIME_QUERY=
+			"select min(a.t) from (select addtime(Run.startTime, sec_to_time(time_to_sec(PathNode.arrivalTime)*time_to_sec(subtime(Run.endTime, Run.startTime))/time_to_sec(pn.arrivalTime))) t from PathNode, Run, PathNode pn where PathNode.pathId=? and PathNode.nodeId=? and Run.pathId=PathNode.pathId and pn.seqNo=(select max(seqNo) from PathNode where pathId=pn.PathId) and pn.pathId=PathNode.pathId) a where a.t>curtime();";
+	
 	private Connection cn;
 	
 	public PathDao(Connection cn)
@@ -230,6 +239,54 @@ public class PathDao
 		List<String> r=new ArrayList<String>();
 		while(rs.next())
 			r.add(rs.getString(1));
+		rs.close();
+		ps.close();
+		return r;
+	}
+	
+	public List<Node> getNodesInPath(int pathId) throws SQLException
+	{
+		List<Node> r=new ArrayList<Node>();
+		PreparedStatement ps=cn.prepareStatement(GET_NODES_IN_PATH_QUERY);
+		ps.setInt(1, pathId);
+		ResultSet rs=ps.executeQuery();
+		while(rs.next())
+			r.add(new Node(rs.getInt("id"),
+						rs.getString("name"), 
+						rs.getDouble("latitude"), 
+						rs.getDouble("longitude")));
+		rs.close();
+		ps.close();
+		return r;
+	}
+	
+	
+	public List<Path> getPathsConnectingTwoNodes(int node1Id, int node2Id)
+			throws SQLException
+	{
+		List<Path> r=new ArrayList<Path>();
+		PreparedStatement ps=cn.prepareStatement(GET_PATHS_CONNECTING_TWO_NODES_QUERY);
+		int ind=0;
+		ps.setInt(++ind, node1Id);
+		ps.setInt(++ind, node2Id);
+		ResultSet rs=ps.executeQuery();
+		while(rs.next())
+			r.add(new Path(rs.getInt("id"), rs.getString("name")));
+		rs.close();
+		ps.close();
+		return r;
+	}
+	
+	public String getNextArrivalTime(int pathId, int nodeId) throws SQLException
+	{
+		String r=null;
+		PreparedStatement ps=cn.prepareStatement(GET_NEXT_ARRIVAL_TIME_QUERY);
+		int ind=0;
+		ps.setInt(++ind, pathId);
+		ps.setInt(++ind, nodeId);
+		ResultSet rs=ps.executeQuery();
+		if(rs.next())
+			r=rs.getString(1);
 		rs.close();
 		ps.close();
 		return r;
