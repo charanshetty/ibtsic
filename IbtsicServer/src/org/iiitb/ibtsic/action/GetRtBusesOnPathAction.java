@@ -3,7 +3,6 @@ package org.iiitb.ibtsic.action;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,9 +10,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.iiitb.ibtsic.action.dao.BusDao;
+import org.iiitb.ibtsic.action.dao.PathDao;
 import org.iiitb.util.ConnectionPool;
 
-public class SetBusLocationAction extends HttpServlet
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+public class GetRtBusesOnPathAction extends HttpServlet
 {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
@@ -21,14 +24,16 @@ public class SetBusLocationAction extends HttpServlet
 		try
 		{
 			response.setContentType("text");
+			PrintWriter pw=response.getWriter();
+			Gson gson=new GsonBuilder().create();
 			
-			String regNo=request.getParameter("regNo");
-			Double latitude=Double.parseDouble(request.getParameter("latitude"));
-			Double longitude=Double.parseDouble(request.getParameter("longitude"));
+			String pathName=request.getParameter("pathName");
 			
 			Connection cn=ConnectionPool.getConnection();
-			BusDao busDao=new BusDao(cn);
-			busDao.setBusLocationAndDirection(regNo, latitude, longitude);
+			PathDao pathDao=new PathDao(cn);
+			int pathId=pathDao.getPathIdFromPathName(pathName);
+			if(pathId!=-1)
+				pw.println(gson.toJson(pathDao.getRtBusesOnPath(pathId)));
 			ConnectionPool.freeConnection(cn);
 		}
 		catch(Exception e)

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.iiitb.ibtsic.action.model.Bus;
 import org.iiitb.ibtsic.action.model.Node;
 import org.iiitb.ibtsic.action.model.Path;
 import org.iiitb.ibtsic.action.model.Run;
@@ -14,10 +15,16 @@ import org.iiitb.ibtsic.action.model.Run;
 public class PathDao
 {
 	private static final String GET_NTH_NODE_IN_PATH_QUERY=
-			"select Node.* from Node, PathNode, Path where Node.id=PathNode.nodeId and PathNode.pathId=Path.id and Path.name=? and PathNode.seqNo=?;"; 
+			"select Node.* from Node, PathNode, Path where Node.id=PathNode.nodeId and PathNode.pathId=Path.id and Path.name=? and PathNode.seqNo=?;";
+	
+	private static final String GET_NTH_NODE_IN_PATH_BY_PATHID_QUERY=
+			"select Node.* from Node, PathNode, Path where Node.id=PathNode.nodeId and PathNode.pathId=Path.id and Path.id=? and PathNode.seqNo=?;";
 	
 	private static final String GET_NODE_COUNT_IN_PATH_QUERY=
 			"select max(seqNo) from PathNode, Path where PathNode.pathId=Path.id and Path.name=?;";
+	
+	private static final String GET_NODE_COUNT_IN_PATH_BY_PATHID_QUERY=
+			"select max(seqNo) from PathNode, Path where PathNode.pathId=Path.id and Path.id=?;";
 	
 	private static final String GET_ALL_RUNS_ON_PATH=
 			"select Run.* from Run, Path where Run.pathId=Path.id and Path.name=? order by Run.number;";
@@ -64,6 +71,9 @@ public class PathDao
 	private static final String GET_NEXT_DEPARTURE_DURATION_QUERY=
 			"select min(a.dur) from (select a.*, b.dt, c.dAt, subtime(c.dAt, b.dt) dur from (select Run.id, addtime(Run.startTime, sec_to_time(time_to_sec(PathNode.arrivalTime)*time_to_sec(subtime(Run.endTime, Run.startTime))/time_to_sec(pn.arrivalTime))) at from PathNode, Run, PathNode pn where PathNode.pathId=? and PathNode.nodeId=? and Run.pathId=PathNode.pathId and pn.seqNo=(select max(seqNo) from PathNode where pathId=pn.PathId) and pn.pathId=PathNode.pathId) a, (select Run.id, addtime(Run.startTime, sec_to_time(time_to_sec(PathNode.departureTime)*time_to_sec(subtime(Run.endTime, Run.startTime))/time_to_sec(pn.arrivalTime))) dt from PathNode, Run, PathNode pn where PathNode.pathId=? and PathNode.nodeId=? and Run.pathId=PathNode.pathId and pn.seqNo=(select max(seqNo) from PathNode where pathId=pn.PathId) and pn.pathId=PathNode.pathId) b, (select Run.id, addtime(Run.startTime, sec_to_time(time_to_sec(PathNode.arrivalTime)*time_to_sec(subtime(Run.endTime, Run.startTime))/time_to_sec(pn.arrivalTime))) dAt from PathNode, Run, PathNode pn where PathNode.pathId=? and PathNode.nodeId=? and Run.pathId=PathNode.pathId and pn.seqNo=(select max(seqNo) from PathNode where pathId=pn.PathId) and pn.pathId=PathNode.pathId) c where a.id=b.id and b.id=c.id) a where a.dt>curtime();";
 	
+	private static final String GET_RT_BUSES_ON_PATH_QUERY=
+			"select * from Bus where currentPathId=?;";
+	
 	private Connection cn;
 	
 	public PathDao(Connection cn)
@@ -90,6 +100,25 @@ public class PathDao
 		return r;
 	}
 	
+	public Node getNthNodeInPath(int pathId, int n) throws SQLException
+	{
+		Node r=null;
+		PreparedStatement ps=cn.prepareStatement(GET_NTH_NODE_IN_PATH_BY_PATHID_QUERY);
+		int ind=0;
+		ps.setInt(++ind, pathId);
+		ps.setInt(++ind, n);
+		ResultSet rs=ps.executeQuery();
+		if(rs.next())
+			r=new Node(rs.getInt("id"),
+					rs.getString("name"), 
+					rs.getDouble("latitude"), 
+					rs.getDouble("longitude"));
+
+		rs.close();
+		ps.close();
+		return r;
+	}
+	
 	public int getNodeCountInPath(String pathName) throws SQLException
 	{
 		int r=-1;
@@ -103,14 +132,37 @@ public class PathDao
 		return r;
 	}
 	
+	public int getNodeCountInPath(int pathId) throws SQLException
+	{
+		int r=-1;
+		PreparedStatement ps=cn.prepareStatement(GET_NODE_COUNT_IN_PATH_BY_PATHID_QUERY);
+		ps.setInt(1, pathId);
+		ResultSet rs=ps.executeQuery();
+		if(rs.next())
+			r=rs.getInt(1);
+		rs.close();
+		ps.close();
+		return r;
+	}
+	
 	public Node getSourceNodeOfPath(String pathName) throws SQLException
 	{
 		return getNthNodeInPath(pathName, 1);
 	}
 	
+	public Node getSourceNodeOfPath(int pathId) throws SQLException
+	{
+		return getNthNodeInPath(pathId, 1);
+	}
+	
 	public Node getDestinationNodeOfPath(String pathName) throws SQLException
 	{
 		return getNthNodeInPath(pathName, getNodeCountInPath(pathName));
+	}
+	
+	public Node getDestinationNodeOfPath(int pathId) throws SQLException
+	{
+		return getNthNodeInPath(pathId, getNodeCountInPath(pathId));
 	}
 	
 	public List<Run> getAllRunsOnPath(String pathName) throws SQLException
@@ -309,6 +361,25 @@ public class PathDao
 		ResultSet rs=ps.executeQuery();
 		if(rs.next())
 			r=rs.getString(1);
+		rs.close();
+		ps.close();
+		return r;
+	}
+	
+	public List<Bus> getRtBusesOnPath(int pathId) throws SQLException
+	{
+		List<Bus> r=new ArrayList<Bus>();
+		PreparedStatement ps=cn.prepareStatement(GET_RT_BUSES_ON_PATH_QUERY);
+		ps.setInt(1, pathId);
+		ResultSet rs=ps.executeQuery();
+		while(rs.next())
+			r.add(new Bus(rs.getInt("id"), 
+					rs.getString("regNo"), 
+					rs.getDouble("latitude"), 
+					rs.getDouble("longitude"), 
+					rs.getInt("onwardPathId"), 
+					rs.getInt("returnPathId"), 
+					rs.getInt("currentPathId")));
 		rs.close();
 		ps.close();
 		return r;

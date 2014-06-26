@@ -8,11 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iiitb.ibtsic.action.model.Bus;
+import org.iiitb.ibtsic.action.model.Node;
 
 public class BusDao
 {
-	private static final String SET_BUS_LOCATION_QUERY=
-			"update Bus set latitude=?, longitude=? where regNo=?;"; 
+	private static final String SET_BUS_LOCATION_AND_DIRECTION_QUERY=
+			"update Bus set latitude=?, longitude=?, currentPathId=? where regNo=?;"; 
 	
 	private static final String ADD_BUS_QUERY=
 			"insert into Bus(regNo, onwardPathId, returnPathId) values(?, ?, ?);";
@@ -29,6 +30,9 @@ public class BusDao
 	private static final String DELETE_BUS_QUERY=
 			"delete from Bus where id=?;";
 	
+	private static final String GET_BUS_BY_REGNO_QUERY=
+			"select * from Bus where regNo=?;";
+	
 	private Connection cn;
 	
 	public BusDao(Connection cn)
@@ -36,13 +40,30 @@ public class BusDao
 		this.cn=cn;
 	}
 	
-	public void setBusLocation(String regNo, double latitude, double longitude) throws SQLException
+	public void setBusLocationAndDirection(String regNo, double latitude, double longitude) throws SQLException
 	{
 		int ind=0;
-		PreparedStatement ps=cn.prepareStatement(SET_BUS_LOCATION_QUERY);
-		ps.setDouble(++ind, latitude);
-		ps.setDouble(++ind, longitude);
-		ps.setString(++ind, regNo);
+		PreparedStatement ps=cn.prepareStatement(SET_BUS_LOCATION_AND_DIRECTION_QUERY);
+		
+		Bus bus=getBusByRegNo(regNo);
+		if(bus!=null)
+		{
+			PathDao pathDao=new PathDao(cn);
+			Node n=pathDao.getSourceNodeOfPath(bus.onwardPathId);
+			
+			Double d1=Math.sqrt(Math.pow((bus.latitude-n.latitude), 2)+Math.pow((bus.longitude-n.longitude), 2));
+			Double d2=Math.sqrt(Math.pow((latitude-n.latitude), 2)+Math.pow((longitude-n.longitude), 2));
+			
+			ps.setDouble(++ind, latitude);
+			ps.setDouble(++ind, longitude);
+			if(d2>d1)
+				ps.setInt(++ind, bus.onwardPathId);
+			else if(d2<d1)
+				ps.setInt(++ind, bus.returnPathId);
+			else
+				ps.setInt(++ind, bus.currentPathId);
+		}
+		
 		ps.executeUpdate();
 		ps.close();
 	}
@@ -76,7 +97,8 @@ public class BusDao
 						rs.getDouble("latitude"), 
 						rs.getDouble("longitude"), 
 						rs.getInt("onwardPathId"), 
-						rs.getInt("returnPathId")));
+						rs.getInt("returnPathId"),
+						rs.getInt("currentPathId")));
 		rs.close();
 		ps.close();
 		return r;
@@ -100,5 +122,24 @@ public class BusDao
 		ps.setInt(1, busId);
 		ps.executeUpdate();
 		ps.close();
+	}
+	
+	public Bus getBusByRegNo(String regNo) throws SQLException
+	{
+		Bus bus=null;
+		PreparedStatement ps=cn.prepareStatement(GET_BUS_BY_REGNO_QUERY);
+		ps.setString(1, regNo);
+		ResultSet rs=ps.executeQuery();
+		if(rs.next())
+			bus=new Bus(rs.getInt("id"), 
+					rs.getString("regNo"), 
+					rs.getDouble("latitude"), 
+					rs.getDouble("longitude"), 
+					rs.getInt("onwardPathId"), 
+					rs.getInt("returnPathId"),
+					rs.getInt("currentPathId"));
+		rs.close();
+		ps.close();
+		return bus;
 	}
 }

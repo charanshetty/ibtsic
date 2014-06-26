@@ -47,7 +47,8 @@ public class AddBusAction extends HttpServlet
 							-1, 
 							-1, 
 							pathDao.getPathIdFromPathName(request.getParameter("pathName")+".onward"), 
-							pathDao.getPathIdFromPathName(request.getParameter("pathName")+".return"));
+							pathDao.getPathIdFromPathName(request.getParameter("pathName")+".return"),
+							-1);
 			
 			BusDao busDao=new BusDao(cn);
 			busDao.addBus(bus);

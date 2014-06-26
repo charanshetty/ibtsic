@@ -74,6 +74,15 @@
   </servlet-mapping>
   
   <servlet>
+    <servlet-name>GetRtBusesOnPathAction</servlet-name>
+    <servlet-class>org.iiitb.ibtsic.action.GetRtBusesOnPathAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetRtBusesOnPathAction</servlet-name>
+    <url-pattern>/getRtBusesOnPathAction</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
     <servlet-name>AddNodeAction</servlet-name>
     <servlet-class>org.iiitb.ibtsic.action.admin.AddNodeAction</servlet-class>
   </servlet>
