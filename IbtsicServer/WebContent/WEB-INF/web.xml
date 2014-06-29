@@ -119,6 +119,15 @@
   </servlet-mapping>
   
   <servlet>
+    <servlet-name>DeletePathAction</servlet-name>
+    <servlet-class>org.iiitb.ibtsic.action.admin.DeletePathAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DeletePathAction</servlet-name>
+    <url-pattern>/deletePathAction</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
     <servlet-name>AddBusAction</servlet-name>
     <servlet-class>org.iiitb.ibtsic.action.admin.AddBusAction</servlet-class>
   </servlet>

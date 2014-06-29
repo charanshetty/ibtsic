@@ -11,17 +11,22 @@
 <body>
 	<div><h1><a href="default.jsp" style="text-decoration: none; color: gray;">IBTSIC Admin</a></h1></div>
 	<hr />
-	<div style="float: left; width: 300px; border-right: medium; border-style: solid; border-bottom: none; border-left: none; border-top: none; color: gray; background-color: #efefef; height: 700px; padding-left: 10px;">
+	<div style="float: left; width: 300px; color: #555555; background-color: #efefef; height: 100%; padding-left: 10px;">
 		<h4>Menu</h4>
+		<hr />
 		<a href="addNodeAction" style="text-decoration: none; color: gray;">Add New Bus Stop</a><br />
 		<a href="editNodeAction" style="text-decoration: none; color: gray;">Edit Bus Stop Details &gt;</a><br />
 		<a href="deleteNodeAction" style="text-decoration: none; color: gray;">Delete Bus Stop</a><br />
+		<hr />
 		<a href="addPathAction" style="text-decoration: none; color: gray;">Add New Bus Route</a><br />
+		<a href="deletePathAction" style="text-decoration: none; color: gray;">Delete Bus Route</a><br />
+		<hr />
 		<a href="addBusAction" style="text-decoration: none; color: gray;">Add New Bus</a><br />
 		<a href="editBusAction" style="text-decoration: none; color: gray;">Edit Bus Details</a><br />
 		<a href="deleteBusAction" style="text-decoration: none; color: gray;">Delete Bus</a><br />
+		<hr />
 	</div>
-	<div style="margin-left: 350px">
+	<div style="margin-left: 350px;">
 		<h2>Edit Bus Stop Details</h2>
 		<form id='frmEditNode' action="editNodeAction" method="post">
 			<table>

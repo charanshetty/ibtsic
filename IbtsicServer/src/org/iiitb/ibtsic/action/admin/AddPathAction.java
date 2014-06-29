@@ -17,6 +17,9 @@ import org.iiitb.ibtsic.action.model.Path;
 import org.iiitb.ibtsic.action.model.Run;
 import org.iiitb.util.ConnectionPool;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public class AddPathAction extends HttpServlet
 {
 	@Override
@@ -48,12 +51,17 @@ public class AddPathAction extends HttpServlet
 			for(String s:request.getParameterValues("nodesInPath"))
 				nodeIdList.add(Integer.parseInt(s));
 			
+			Gson gson=new GsonBuilder().create();
+			String[] arrivalTimes=gson.fromJson(request.getParameter("arrivalTimes"), String[].class);
+			String[] departureTimes=gson.fromJson(request.getParameter("departureTimes"), String[].class);
+			String[] distances=gson.fromJson(request.getParameter("distances"), String[].class);
+			
 			Connection cn=ConnectionPool.getConnection();
 			PathDao pathDao=new PathDao(cn);
 			int pathId=pathDao.addPath(new Path(-1, request.getParameter("name")));
 			if(pathId!=-1)
 			{
-				pathDao.addNodesToPath(pathId, nodeIdList);
+				pathDao.addNodesToPath(pathId, nodeIdList, arrivalTimes, departureTimes, distances);
 				
 				List<Run> runList=new ArrayList<Run>();
 				for(String s:request.getParameterValues("runsOnPath"))

@@ -39,7 +39,7 @@ public class PathDao
 			"delete from PathNode where pathId=?;";
 	
 	private static final String ADD_NODE_TO_PATH_QUERY=
-			"insert into PathNode(pathId, nodeId, seqNo) values(?, ?, ?);";
+			"insert into PathNode(pathId, nodeId, seqNo, arrivalTime, departureTime, distance) values(?, ?, ?, ?, ?, ?);";
 	
 	private static final String DELETE_ALL_RUNS_ON_PATH_QUERY=
 			"delete from Run where pathId=?;";
@@ -54,7 +54,7 @@ public class PathDao
 			"select id from Path where name=?;";
 	
 	private static final String GET_ALL_ONWARD_PATHS_QUERY=
-			"select * from Path where name like '%.onward';";
+			"select * from Path where name like '%.onward' order by name;";
 	
 	private static final String GET_PATHNAMES_WITH_PREFIX_QUERY=
 			"select distinct(substring_index(name, '.', 1)) name from Path where name like ? order by name;";
@@ -73,6 +73,12 @@ public class PathDao
 	
 	private static final String GET_RT_BUSES_ON_PATH_QUERY=
 			"select * from Bus where currentPathId=?;";
+	
+	private static final String DELETE_PATH_QUERY=
+			"delete from Path where id=?;";
+	
+	private static final String GET_ALL_PATHS_QUERY=
+			"select * from Path order by name;";
 	
 	private Connection cn;
 	
@@ -206,7 +212,8 @@ public class PathDao
 		ps.close();
 	}
 	
-	public int addNodesToPath(int pathId, List<Integer> nodeIdList) throws SQLException
+	public int addNodesToPath(int pathId, List<Integer> nodeIdList, String[] arrivalTimes, 
+			String[] departureTimes, String[] distances) throws SQLException
 	{
 		deleteAllNodesInPath(pathId);
 		
@@ -216,6 +223,9 @@ public class PathDao
 		{
 			ps.setInt(1, pathId);
 			ps.setInt(2, nodeId);
+			ps.setString(4, arrivalTimes[seqNo]);
+			ps.setString(5, departureTimes[seqNo]);
+			ps.setString(6, distances[seqNo]);
 			ps.setInt(3, ++seqNo);
 			ps.executeUpdate();
 		}
@@ -277,6 +287,18 @@ public class PathDao
 	public List<Path> getAllOnwardPaths() throws SQLException
 	{
 		PreparedStatement ps=cn.prepareStatement(GET_ALL_ONWARD_PATHS_QUERY);
+		ResultSet rs=ps.executeQuery();
+		List<Path> r=new ArrayList<Path>();
+		while(rs.next())
+			r.add(new Path(rs.getInt("id"), rs.getString("name")));
+		rs.close();
+		ps.close();
+		return r;
+	}
+	
+	public List<Path> getAllPaths() throws SQLException
+	{
+		PreparedStatement ps=cn.prepareStatement(GET_ALL_PATHS_QUERY);
 		ResultSet rs=ps.executeQuery();
 		List<Path> r=new ArrayList<Path>();
 		while(rs.next())
@@ -383,5 +405,13 @@ public class PathDao
 		rs.close();
 		ps.close();
 		return r;
+	}
+	
+	public void deletePath(int pathId) throws SQLException
+	{
+		PreparedStatement ps=cn.prepareStatement(DELETE_PATH_QUERY);
+		ps.setInt(1, pathId);
+		ps.executeUpdate();
+		ps.close();
 	}
 }
