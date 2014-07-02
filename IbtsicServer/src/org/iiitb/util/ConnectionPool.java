@@ -8,6 +8,9 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+/*
+ * Author: Joshi Dnyanesh Madhav
+ * */
 public class ConnectionPool
 {
 

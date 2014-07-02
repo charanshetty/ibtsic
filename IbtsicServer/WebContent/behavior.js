@@ -1,3 +1,7 @@
+/*
+ * Author: Joshi Dnyanesh Madhav
+ * */
+
 function onClick_l2r(l1, l2)
 {
 	var tNodes=document.getElementById("tNodes");

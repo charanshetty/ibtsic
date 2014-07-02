@@ -18,6 +18,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/*
+ * Author: Joshi Dnyanesh Madhav
+ * */
 public class MainActivity extends Activity {
 
 	TextView tvStatus;
