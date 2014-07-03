@@ -20,6 +20,15 @@
   </servlet-mapping>
   
   <servlet>
+    <servlet-name>GetActiveAnnouncementsForPathAction</servlet-name>
+    <servlet-class>org.iiitb.ibtsic.action.GetActiveAnnouncementsForPathAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetActiveAnnouncementsForPathAction</servlet-name>
+    <url-pattern>/getActiveAnnouncementsForPathAction</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
     <servlet-name>GetStaticPathInfoAction</servlet-name>
     <servlet-class>org.iiitb.ibtsic.action.GetStaticPathInfoAction</servlet-class>
   </servlet>
