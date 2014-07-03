@@ -20,6 +20,9 @@ public class AnnouncementDao
 	private static final String GET_ALL_ACTIVE_ANNOUNCEMENTS=
 			"select * from Announcement where TIMESTAMPADD(SECOND, time_to_sec(validity), startInstant)>CURRENT_TIMESTAMP;";
 	
+	private static final String ADD_ANNOUNCEMENT_QUERY=
+			"insert into Announcement(name, description, startInstant, validity, node1Id, node2Id) values(?, ?, CURRENT_TIMESTAMP, ?, ?, ?);";
+	
 	private Connection cn;
 	
 	public AnnouncementDao(Connection cn)
@@ -57,5 +60,19 @@ public class AnnouncementDao
 					break;
 				}
 		return r;
+	}
+	
+	public void addAnnouncement(String name, String description, int node1Id, int node2Id, String validity)
+		throws SQLException
+	{
+		PreparedStatement ps=cn.prepareStatement(ADD_ANNOUNCEMENT_QUERY);
+		int ind=0;
+		ps.setString(++ind, name);
+		ps.setString(++ind, description);
+		ps.setString(++ind, validity);
+		ps.setInt(++ind, node1Id);
+		ps.setInt(++ind, node2Id);
+		ps.executeUpdate();
+		ps.close();
 	}
 }

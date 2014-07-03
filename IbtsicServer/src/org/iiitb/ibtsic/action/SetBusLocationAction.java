@@ -23,8 +23,6 @@ public class SetBusLocationAction extends HttpServlet
 	{
 		try
 		{
-			response.setContentType("text");
-			
 			String regNo=request.getParameter("regNo");
 			Double latitude=Double.parseDouble(request.getParameter("latitude"));
 			Double longitude=Double.parseDouble(request.getParameter("longitude"));
