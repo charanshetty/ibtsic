@@ -1,5 +1,8 @@
 package org.iiitb.ibtsicclienttrafficpolice;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,8 +10,12 @@ import org.iiitb.ibtsicclienttrafficpolice.net.HttpConnection;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.KeyListener;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -18,11 +25,32 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
-	EditText name, description, validity, serverDetails;
+	EditText name, description, validity;
 	AutoCompleteTextView node1Name, node2Name;
 	ArrayAdapter<String> adapter1, adapter2;
 	List<String> l1=new ArrayList<String>();
 	List<String> l2=new ArrayList<String>();
+	String serverDetails="";
+	
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+		
+		try
+		{
+			File f = new File(this.getFilesDir(), ServerDetailsActivity.fname);
+			FileReader fr=new FileReader(f);
+			BufferedReader br=new BufferedReader(fr);
+			serverDetails=br.readLine();
+			br.close();
+			fr.close();
+		}
+		catch(Exception e)
+		{
+			//do nothing
+		}
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,10 +60,15 @@ public class MainActivity extends Activity {
 		name=(EditText)findViewById(R.id.editText1);
 		description=(EditText)findViewById(R.id.editText2);
 		validity=(EditText)findViewById(R.id.editText3);
-		serverDetails=(EditText)findViewById(R.id.editText4);
-		serverDetails.setText(this.getIntent().getExtras().getString("serverDetailsText"));
 		node1Name=(AutoCompleteTextView)findViewById(R.id.autoCompleteTextView1);
 		node2Name=(AutoCompleteTextView)findViewById(R.id.autoCompleteTextView2);
+		
+		Resources res = getResources(); 
+		int color = res.getColor(android.R.color.black);
+		node1Name.setTextColor(color);
+		node1Name.setHintTextColor(color);
+		node2Name.setTextColor(color);
+		node2Name.setHintTextColor(color);
 		
 		node1Name.addTextChangedListener(new TextWatcher() {
 			
@@ -57,11 +90,11 @@ public class MainActivity extends Activity {
 				// TODO Auto-generated method stub
 				try
 				{
-					if(!serverDetails.getText().toString().trim().equals(""))
+					if(!serverDetails.trim().equals(""))
 					{
 						Thread t=new Thread(
 							new HttpConnection("sendHttpGetRequest", 
-								"http://"+serverDetails.getText().toString()+"/IbtsicServer/getNodeNamesWithPrefixAction?nodeNamePrefix="+node1Name.getText().toString(),
+								"http://"+serverDetails+"/IbtsicServer/getNodeNamesWithPrefixAction?nodeNamePrefix="+node1Name.getText().toString(),
 								adapter1));
 						t.start();
 					}
@@ -72,7 +105,7 @@ public class MainActivity extends Activity {
 			}
 		});
 		
-		adapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, l1);
+		adapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, l1);
 		node1Name.setThreshold(1);
 		node1Name.setAdapter(adapter1);
 		
@@ -96,11 +129,11 @@ public class MainActivity extends Activity {
 				// TODO Auto-generated method stub
 				try
 				{
-					if(!serverDetails.getText().toString().trim().equals(""))
+					if(!serverDetails.trim().equals(""))
 					{
 						Thread t=new Thread(
 							new HttpConnection("sendHttpGetRequest", 
-								"http://"+serverDetails.getText().toString()+"/IbtsicServer/getNodeNamesWithPrefixAction?nodeNamePrefix="+node2Name.getText().toString(),
+								"http://"+serverDetails+"/IbtsicServer/getNodeNamesWithPrefixAction?nodeNamePrefix="+node2Name.getText().toString(),
 								adapter2));
 						t.start();
 					}
@@ -111,7 +144,7 @@ public class MainActivity extends Activity {
 			}
 		});
 		
-		adapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, l2);
+		adapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, l2);
 		node2Name.setThreshold(1);
 		node2Name.setAdapter(adapter2);
 	}
@@ -127,7 +160,7 @@ public class MainActivity extends Activity {
 	{
 		try
 		{
-			if(!serverDetails.getText().toString().trim().equals("")
+			if(!serverDetails.trim().equals("")
 					&& !name.getText().toString().trim().equals("")
 					&& !description.getText().toString().trim().equals("")
 					&& !validity.getText().toString().trim().equals("")
@@ -135,13 +168,13 @@ public class MainActivity extends Activity {
 					&& !node2Name.getText().toString().trim().equals(""))
 			{
 				new HttpConnection().sendHttpGetRequest("http://"
-					+serverDetails.getText().toString()
+					+serverDetails
 					+"/IbtsicServer/addAnnouncementAction?"
 					+"name="+name.getText().toString()
-					+"description="+description.getText().toString()
-					+"validity="+validity.getText().toString()
-					+"node1Name="+node1Name.getText().toString()
-					+"node2Name="+node2Name.getText().toString());
+					+"&description="+description.getText().toString()
+					+"&validity="+validity.getText().toString()
+					+"&node1Name="+node1Name.getText().toString()
+					+"&node2Name="+node2Name.getText().toString());
 				
 				Toast.makeText(this, "Success!", Toast.LENGTH_SHORT).show();
 				
@@ -158,5 +191,11 @@ public class MainActivity extends Activity {
 		{
 			Toast.makeText(this, "Error!", Toast.LENGTH_SHORT).show();
 		}
+	}
+	
+	public void button2_onClick(View view)
+	{
+		Intent intent=new Intent(this, ServerDetailsActivity.class);
+		this.startActivity(intent);
 	}
 }

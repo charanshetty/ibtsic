@@ -1,5 +1,12 @@
 package org.iiitb.ibtsicclienttrafficpolice;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.PrintWriter;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -11,6 +18,7 @@ import android.widget.Toast;
 public class ServerDetailsActivity extends Activity {
 
 	EditText serverDetails;
+	final static String fname="IbtsicServerDetails.txt";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +26,20 @@ public class ServerDetailsActivity extends Activity {
 		setContentView(R.layout.activity_server_details);
 		
 		serverDetails=(EditText)findViewById(R.id.editText11);
+		
+		try
+		{
+			File f = new File(this.getFilesDir(), fname);
+			FileReader fr=new FileReader(f);
+			BufferedReader br=new BufferedReader(fr);
+			serverDetails.setText(br.readLine());
+			br.close();
+			fr.close();
+		}
+		catch(Exception e)
+		{
+			//do nothing
+		}
 	}
 
 	@Override
@@ -31,9 +53,23 @@ public class ServerDetailsActivity extends Activity {
 	{
 		if(!serverDetails.getText().toString().trim().equals(""))
 		{
+			try
+			{
+				File f = new File(this.getFilesDir(), fname);
+				PrintWriter pw=new PrintWriter(f);
+				pw.println(serverDetails.getText().toString());
+				pw.close();
+			}
+			catch(Exception e)
+			{
+				Toast.makeText(this, "Server details could not be saved.", Toast.LENGTH_SHORT).show();
+			}
+			
+			this.finish();
+			/*
 			Intent intent=new Intent(this, MainActivity.class);
 			intent.putExtra("serverDetailsText", serverDetails.getText().toString());
-			this.startActivity(intent);
+			this.startActivity(intent);*/
 		}
 		else
 			Toast.makeText(this, "The field is empty.", Toast.LENGTH_SHORT).show();
