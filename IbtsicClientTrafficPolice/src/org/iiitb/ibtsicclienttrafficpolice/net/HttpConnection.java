@@ -46,6 +46,8 @@ public class HttpConnection implements Runnable
 	
 	public List<String> sendHttpGetRequest(String url) throws ClientProtocolException, IOException
 	{
+		url=url.replace(" ", "%20");
+		
 		HttpClient client=new DefaultHttpClient();
 		HttpGet request = new HttpGet(url);
 		HttpResponse response=client.execute(request);

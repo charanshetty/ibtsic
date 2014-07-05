@@ -29,7 +29,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_alignLeft="@+id/textView1"
 	        android:layout_below="@+id/textView1"
-	        android:layout_marginTop="48dp"
+	        android:layout_marginTop="56dp"
 	        android:text="Description" />
 	
 	    <EditText
@@ -71,13 +71,24 @@
 	        android:ems="10" />
 	
 	    <TextView
-	        android:id="@+id/TextView02"
+	        android:id="@+id/TextViewpppp"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_alignLeft="@+id/TextView01"
 	        android:layout_below="@+id/editText3"
 	        android:layout_marginTop="21dp"
-	        android:text="Node1 Name" />
+	        android:text="The problem location is on the road" />
+	    
+	    <TextView
+	        android:id="@+id/TextView02"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignLeft="@+id/TextView01"
+	        android:layout_below="@+id/editText3"
+	        android:layout_marginTop="41dp"
+	        android:layout_marginLeft="10dp"
+	        android:textColor="#888888"
+	        android:text="from Node1" />
 	
 	    <TextView
 	        android:id="@+id/TextView03"
@@ -86,7 +97,8 @@
 	        android:layout_alignLeft="@+id/TextView02"
 	        android:layout_below="@+id/TextView02"
 	        android:layout_marginTop="62dp"
-	        android:text="Node2 Name" />
+	        android:textColor="#888888"
+	        android:text="to Node2" />
 	
 	    <AutoCompleteTextView
 	        android:id="@+id/autoCompleteTextView1"
@@ -116,15 +128,6 @@
 	        android:text="Name" />
 
 	    <Button
-	        android:id="@+id/button1"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignLeft="@+id/autoCompleteTextView2"
-	        android:layout_below="@+id/autoCompleteTextView2"
-	        android:onClick="button1_onClick"
-	        android:text="Submit" />
-
-	    <Button
 	        android:id="@+id/button2"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
@@ -133,6 +136,15 @@
 	        android:onClick="button2_onClick"
 	        android:text="Settings"
 	        android:textSize="6pt" />
+
+	    <Button
+	        android:id="@+id/button1"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/autoCompleteTextView2"
+	        android:layout_centerHorizontal="true"
+	        android:onClick="button1_onClick"
+	        android:text="Submit" />
 	
 	</RelativeLayout>
 </ScrollView>
